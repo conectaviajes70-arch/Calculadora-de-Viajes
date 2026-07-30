@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Conecta – Calculadora de Viajes</title>
+  <style>
+    :root {
+      --bg: #0a0e17;
+      --card: #121826;
+      --border: #1e293b;
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+      --cyan: #00e5ff;
+      --cyan-dim: #00b8d4;
+      --green: #10b981;
+      --amber: #f59e0b;
+      --red: #ef4444;
+      --input-bg: #0f172a;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 20px 16px 40px;
+      line-height: 1.4;
+    }
+
+    .container {
+      max-width: 420px;
+      margin: 0 auto;
+    }
+
+    /* Header / Logo */
+    .header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .logo {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .logo-icon {
+      width: 72px;
+      height: 72px;
+      filter: drop-shadow(0 0 12px rgba(0, 229, 255, 0.5));
+    }
+
+    .logo-text {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--cyan);
+      letter-spacing: 1px;
+      text-shadow: 0 0 18px rgba(0, 229, 255, 0.4);
+    }
+
+    .title {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-size: 1.35rem;
+      font-weight: 600;
+      margin-bottom: 24px;
+      color: var(--text);
+    }
+
+    .traffic-light {
+      font-size: 1.1rem;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 22px 20px;
+      margin-bottom: 18px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+    }
+
+    .card h2 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 18px;
+      color: var(--text);
+    }
+
+    label {
+      display: block;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      margin-top: 14px;
+    }
+
+    label:first-of-type {
+      margin-top: 0;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px 14px;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input:focus {
+      border-color: var(--cyan);
+      box-shadow: 0 0 0 3px rgba(0, 229, 255, 0.15);
+    }
+
+    input::placeholder {
+      color: #475569;
+    }
+
+    /* Buttons */
+    .btn {
+      width: 100%;
+      padding: 13px;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.15s, opacity 0.15s, box-shadow 0.2s;
+      margin-top: 16px;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--cyan-dim), var(--cyan));
+      color: #0a0e17;
+      box-shadow: 0 4px 18px rgba(0, 229, 255, 0.3);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 6px 24px rgba(0, 229, 255, 0.45);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      margin-top: 10px;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--cyan-dim);
+      color: var(--cyan);
+    }
+
+    .btn-save {
+      background: linear-gradient(135deg, #0369a1, #0284c7);
+      color: white;
+      box-shadow: 0 4px 16px rgba(2, 132, 199, 0.35);
+    }
+
+    /* Result box */
+    .result {
+      display: none;
+      margin-top: 16px;
+      padding: 16px 14px;
+      border-radius: 12px;
+      text-align: center;
+      font-weight: 600;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .result.visible {
+      display: block;
+    }
+
+    .result.green {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid var(--green);
+      color: #34d399;
+    }
+
+    .result.amber {
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid var(--amber);
+      color: #fbbf24;
+    }
+
+    .result.red {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid var(--red);
+      color: #f87171;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 28px;
+      font-size: 0.8rem;
+      color: #475569;
+    }
+
+    /* Small screens */
+    @media (max-width: 380px) {
+      .card { padding: 18px 16px; }
+      .logo-text { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <div class="logo">
+        <!-- Replace src with your logo file when uploading to GitHub -->
+        <svg class="logo-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M70 30c0-16.5-13.5-30-30-30S10 13.5 10 30s13.5 30 30 30c5.5 0 10.6-1.5 15-4.1" stroke="#00e5ff" stroke-width="8" stroke-linecap="round"/>
+          <path d="M70 50c0-11-9-20-20-20s-20 9-20 20 9 20 20 20c3.7 0 7.1-1 10-2.7" stroke="#00e5ff" stroke-width="8" stroke-linecap="round"/>
+          <path d="M78 42h12M78 58h12" stroke="#00e5ff" stroke-width="8" stroke-linecap="round"/>
+        </svg>
+        <div class="logo-text">Conecta</div>
+      </div>
+    </div>
+
+    <div class="title">
+      <span class="traffic-light">🟢🟡🔴</span>
+      Calculadora de Viajes
+    </div>
+
+    <!-- Datos del Viaje -->
+    <div class="card">
+      <h2>Datos del Viaje</h2>
+
+      <label for="distancia">Distancia (km):</label>
+      <input type="number" id="distancia" placeholder="Ej. 12.5" min="0" step="0.1" />
+
+      <label for="tiempo">Tiempo (minutos):</label>
+      <input type="number" id="tiempo" placeholder="Ej. 35" min="0" step="1" />
+
+      <label for="tarifa">Tarifa ganada ($):</label>
+      <input type="number" id="tarifa" placeholder="Ej. 150" min="0" step="0.01" />
+
+      <button class="btn btn-primary" onclick="calcular()">Calcular</button>
+      <button class="btn btn-secondary" onclick="limpiarCampos()">Limpiar campos</button>
+
+      <div id="resultado" class="result"></div>
+    </div>
+
+    <!-- Configuración de Vehículo -->
+    <div class="card">
+      <h2>Configuración de Vehículo</h2>
+
+      <label for="rendimiento">Rendimiento (km/l):</label>
+      <input type="number" id="rendimiento" placeholder="Ej. 13" min="0" step="0.1" />
+
+      <label for="precioGasolina">Precio gasolina ($/l):</label>
+      <input type="number" id="precioGasolina" placeholder="Ej. 24.50" min="0" step="0.01" />
+
+      <label for="mantenimiento">Mantenimiento ($/km):</label>
+      <input type="number" id="mantenimiento" placeholder="Ej. 1.20" min="0" step="0.01" />
+
+      <button class="btn btn-save" onclick="guardarConfig()">Guardar Configuración</button>
+    </div>
+
+    <div class="footer">Conecta · Calculadora de Viajes</div>
+  </div>
+
+  <script>
+    // Umbrales ocultos
+    const UMBRAL_KM = 8;      // $ por km
+    const UMBRAL_HORA = 180;  // $ por hora
+
+    // Cargar configuración guardada al iniciar
+    window.addEventListener('DOMContentLoaded', () => {
+      const config = JSON.parse(localStorage.getItem('conectaConfig') || '{}');
+      if (config.rendimiento) document.getElementById('rendimiento').value = config.rendimiento;
+      if (config.precioGasolina) document.getElementById('precioGasolina').value = config.precioGasolina;
+      if (config.mantenimiento) document.getElementById('mantenimiento').value = config.mantenimiento;
+    });
+
+    function guardarConfig() {
+      const config = {
+        rendimiento: parseFloat(document.getElementById('rendimiento').value) || 0,
+        precioGasolina: parseFloat(document.getElementById('precioGasolina').value) || 0,
+        mantenimiento: parseFloat(document.getElementById('mantenimiento').value) || 0
+      };
+      localStorage.setItem('conectaConfig', JSON.stringify(config));
+      alert('✅ Configuración guardada correctamente');
+    }
+
+    function limpiarCampos() {
+      document.getElementById('distancia').value = '';
+      document.getElementById('tiempo').value = '';
+      document.getElementById('tarifa').value = '';
+      const res = document.getElementById('resultado');
+      res.className = 'result';
+      res.textContent = '';
+    }
+
+    function calcular() {
+      const distancia = parseFloat(document.getElementById('distancia').value);
+      const tiempoMin = parseFloat(document.getElementById('tiempo').value);
+      const tarifa = parseFloat(document.getElementById('tarifa').value);
+
+      const rendimiento = parseFloat(document.getElementById('rendimiento').value) || 0;
+      const precioGasolina = parseFloat(document.getElementById('precioGasolina').value) || 0;
+      const mantenimiento = parseFloat(document.getElementById('mantenimiento').value) || 0;
+
+      const res = document.getElementById('resultado');
+
+      // Validaciones básicas
+      if (!distancia || distancia <= 0 || !tiempoMin || tiempoMin <= 0 || isNaN(tarifa)) {
+        res.className = 'result red visible';
+        res.textContent = 'Por favor completa todos los datos del viaje correctamente.';
+        return;
+      }
+
+      if (rendimiento <= 0 || precioGasolina < 0) {
+        res.className = 'result amber visible';
+        res.textContent = 'Configura el rendimiento y precio de gasolina antes de calcular.';
+        return;
+      }
+
+      // Cálculos
+      const costoCombustible = (distancia / rendimiento) * precioGasolina;
+      const costoMantenimiento = distancia * mantenimiento;
+      const gananciaNeta = tarifa - costoCombustible - costoMantenimiento;
+
+      const porKm = gananciaNeta / distancia;
+      const horas = tiempoMin / 60;
+      const porHora = gananciaNeta / horas;
+
+      // Formateo
+      const netaFmt = gananciaNeta.toFixed(2);
+      const kmFmt = porKm.toFixed(2);
+      const horaFmt = porHora.toFixed(2);
+
+      // Color según umbrales
+      let clase = 'red';
+      if (porKm >= UMBRAL_KM && porHora >= UMBRAL_HORA) {
+        clase = 'green';
+      } else if (porKm >= UMBRAL_KM * 0.75 || porHora >= UMBRAL_HORA * 0.75) {
+        clase = 'amber';
+      }
+
+      res.className = `result ${clase} visible`;
+      res.innerHTML = `Ganancia neta: $${netaFmt}<br>${kmFmt}/km | ${horaFmt}/h`;
+    }
+  </script>
+</body>
+</html>
