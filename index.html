@@ -41,10 +41,10 @@
 
     /* Header / Logo */
     .header {
-  text-align: center;
-  margin-bottom: 20px;
-  margin-top: 10px;
-}
+      text-align: center;
+      margin-bottom: 20px;
+      margin-top: 10px;
+    }
 
     .logo {
       display: inline-flex;
@@ -53,12 +53,12 @@
       gap: 6px;
     }
 
-  .logo-icon {
-  width: 110px;
-  height: auto;
-  border-radius: 16px;
-  filter: drop-shadow(0 0 18px rgba(0, 229, 255, 0.55));
-}
+    .logo-icon {
+      width: 110px;
+      height: auto;
+      border-radius: 16px;
+      filter: drop-shadow(0 0 18px rgba(0, 229, 255, 0.55));
+    }
 
     .logo-text {
       font-size: 1.75rem;
@@ -112,7 +112,7 @@
       margin-top: 0;
     }
 
-    input {
+    input, select {
       width: 100%;
       padding: 12px 14px;
       background: var(--input-bg);
@@ -124,13 +124,22 @@
       transition: border-color 0.2s, box-shadow 0.2s;
     }
 
-    input:focus {
+    input:focus, select:focus {
       border-color: var(--cyan);
       box-shadow: 0 0 0 3px rgba(0, 229, 255, 0.15);
     }
 
     input::placeholder {
       color: #475569;
+    }
+
+    select {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2394a3b8' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 40px;
     }
 
     /* Buttons */
@@ -182,12 +191,12 @@
     .result {
       display: none;
       margin-top: 16px;
-      padding: 16px 14px;
+      padding: 18px 16px;
       border-radius: 12px;
       text-align: center;
-      font-weight: 600;
-      font-size: 0.95rem;
-      line-height: 1.5;
+      font-weight: 500;
+      font-size: 0.92rem;
+      line-height: 1.55;
       animation: fadeIn 0.3s ease;
     }
 
@@ -213,6 +222,26 @@
       color: #f87171;
     }
 
+    .result .desglose {
+      font-size: 0.88rem;
+      opacity: 0.9;
+      margin-bottom: 10px;
+      line-height: 1.6;
+    }
+
+    .result .neta {
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin: 8px 0 6px;
+      letter-spacing: 0.3px;
+    }
+
+    .result .rentabilidad {
+      font-size: 0.95rem;
+      font-weight: 600;
+      opacity: 0.95;
+    }
+
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(-6px); }
       to { opacity: 1; transform: translateY(0); }
@@ -225,10 +254,20 @@
       color: #475569;
     }
 
+    /* Campos dinámicos */
+    .campo-gasolina, .campo-electrico {
+      display: none;
+    }
+
+    .campo-gasolina.visible, .campo-electrico.visible {
+      display: block;
+    }
+
     /* Small screens */
     @media (max-width: 380px) {
       .card { padding: 18px 16px; }
       .logo-text { font-size: 1.5rem; }
+      .result .neta { font-size: 1.2rem; }
     }
   </style>
 </head>
@@ -237,8 +276,8 @@
     <!-- Header -->
     <div class="header">
       <div class="logo">
-        <!-- Replace src with your logo file when uploading to GitHub -->
-       <img src="Logo-Conecta.png.png" alt="Conecta" class="logo-icon" />
+        <!-- Cambia "logo.png" por el nombre de tu archivo de logo -->
+        <img src="logo.png" alt="Conecta" class="logo-icon" />
       </div>
     </div>
 
@@ -270,11 +309,29 @@
     <div class="card">
       <h2>Configuración de Vehículo</h2>
 
-      <label for="rendimiento">Rendimiento (km/l):</label>
-      <input type="number" id="rendimiento" placeholder="Ej. 13" min="0" step="0.1" />
+      <label for="tipoVehiculo">Tipo de vehículo:</label>
+      <select id="tipoVehiculo" onchange="cambiarTipoVehiculo()">
+        <option value="gasolina">Auto Gasolina</option>
+        <option value="electrico">Auto Eléctrico</option>
+      </select>
 
-      <label for="precioGasolina">Precio gasolina ($/l):</label>
-      <input type="number" id="precioGasolina" placeholder="Ej. 24.50" min="0" step="0.01" />
+      <!-- Campos Gasolina -->
+      <div class="campo-gasolina visible" id="camposGasolina">
+        <label for="rendimiento">Rendimiento (km/l):</label>
+        <input type="number" id="rendimiento" placeholder="Ej. 13" min="0" step="0.1" />
+
+        <label for="precioGasolina">Precio gasolina ($/l):</label>
+        <input type="number" id="precioGasolina" placeholder="Ej. 24.50" min="0" step="0.01" />
+      </div>
+
+      <!-- Campos Eléctrico -->
+      <div class="campo-electrico" id="camposElectrico">
+        <label for="rendimientoElec">Rendimiento (km/kWh):</label>
+        <input type="number" id="rendimientoElec" placeholder="Ej. 6.5" min="0" step="0.1" />
+
+        <label for="precioElectricidad">Precio electricidad ($/kWh):</label>
+        <input type="number" id="precioElectricidad" placeholder="Ej. 2.80" min="0" step="0.01" />
+      </div>
 
       <label for="mantenimiento">Mantenimiento ($/km):</label>
       <input type="number" id="mantenimiento" placeholder="Ej. 1.20" min="0" step="0.01" />
@@ -293,15 +350,41 @@
     // Cargar configuración guardada al iniciar
     window.addEventListener('DOMContentLoaded', () => {
       const config = JSON.parse(localStorage.getItem('conectaConfig') || '{}');
+
+      if (config.tipoVehiculo) {
+        document.getElementById('tipoVehiculo').value = config.tipoVehiculo;
+      }
+
       if (config.rendimiento) document.getElementById('rendimiento').value = config.rendimiento;
       if (config.precioGasolina) document.getElementById('precioGasolina').value = config.precioGasolina;
+      if (config.rendimientoElec) document.getElementById('rendimientoElec').value = config.rendimientoElec;
+      if (config.precioElectricidad) document.getElementById('precioElectricidad').value = config.precioElectricidad;
       if (config.mantenimiento) document.getElementById('mantenimiento').value = config.mantenimiento;
+
+      cambiarTipoVehiculo();
     });
+
+    function cambiarTipoVehiculo() {
+      const tipo = document.getElementById('tipoVehiculo').value;
+      const gasolina = document.getElementById('camposGasolina');
+      const electrico = document.getElementById('camposElectrico');
+
+      if (tipo === 'gasolina') {
+        gasolina.classList.add('visible');
+        electrico.classList.remove('visible');
+      } else {
+        gasolina.classList.remove('visible');
+        electrico.classList.add('visible');
+      }
+    }
 
     function guardarConfig() {
       const config = {
+        tipoVehiculo: document.getElementById('tipoVehiculo').value,
         rendimiento: parseFloat(document.getElementById('rendimiento').value) || 0,
         precioGasolina: parseFloat(document.getElementById('precioGasolina').value) || 0,
+        rendimientoElec: parseFloat(document.getElementById('rendimientoElec').value) || 0,
+        precioElectricidad: parseFloat(document.getElementById('precioElectricidad').value) || 0,
         mantenimiento: parseFloat(document.getElementById('mantenimiento').value) || 0
       };
       localStorage.setItem('conectaConfig', JSON.stringify(config));
@@ -314,16 +397,14 @@
       document.getElementById('tarifa').value = '';
       const res = document.getElementById('resultado');
       res.className = 'result';
-      res.textContent = '';
+      res.innerHTML = '';
     }
 
     function calcular() {
       const distancia = parseFloat(document.getElementById('distancia').value);
       const tiempoMin = parseFloat(document.getElementById('tiempo').value);
       const tarifa = parseFloat(document.getElementById('tarifa').value);
-
-      const rendimiento = parseFloat(document.getElementById('rendimiento').value) || 0;
-      const precioGasolina = parseFloat(document.getElementById('precioGasolina').value) || 0;
+      const tipo = document.getElementById('tipoVehiculo').value;
       const mantenimiento = parseFloat(document.getElementById('mantenimiento').value) || 0;
 
       const res = document.getElementById('resultado');
@@ -331,26 +412,54 @@
       // Validaciones básicas
       if (!distancia || distancia <= 0 || !tiempoMin || tiempoMin <= 0 || isNaN(tarifa)) {
         res.className = 'result red visible';
-        res.textContent = 'Por favor completa todos los datos del viaje correctamente.';
+        res.innerHTML = 'Por favor completa todos los datos del viaje correctamente.';
         return;
       }
 
-      if (rendimiento <= 0 || precioGasolina < 0) {
-        res.className = 'result amber visible';
-        res.textContent = 'Configura el rendimiento y precio de gasolina antes de calcular.';
-        return;
+      let costoEnergia = 0;
+      let etiquetaEnergia = '';
+      let rendimientoValido = false;
+
+      if (tipo === 'gasolina') {
+        const rendimiento = parseFloat(document.getElementById('rendimiento').value) || 0;
+        const precioGasolina = parseFloat(document.getElementById('precioGasolina').value) || 0;
+
+        if (rendimiento <= 0 || precioGasolina < 0) {
+          res.className = 'result amber visible';
+          res.innerHTML = 'Configura el rendimiento y precio de gasolina antes de calcular.';
+          return;
+        }
+
+        costoEnergia = (distancia / rendimiento) * precioGasolina;
+        etiquetaEnergia = 'Gasolina';
+        rendimientoValido = true;
+      } else {
+        const rendimientoElec = parseFloat(document.getElementById('rendimientoElec').value) || 0;
+        const precioElectricidad = parseFloat(document.getElementById('precioElectricidad').value) || 0;
+
+        if (rendimientoElec <= 0 || precioElectricidad < 0) {
+          res.className = 'result amber visible';
+          res.innerHTML = 'Configura el rendimiento y precio de electricidad antes de calcular.';
+          return;
+        }
+
+        costoEnergia = (distancia / rendimientoElec) * precioElectricidad;
+        etiquetaEnergia = 'Electricidad';
+        rendimientoValido = true;
       }
 
-      // Cálculos
-      const costoCombustible = (distancia / rendimiento) * precioGasolina;
+      if (!rendimientoValido) return;
+
       const costoMantenimiento = distancia * mantenimiento;
-      const gananciaNeta = tarifa - costoCombustible - costoMantenimiento;
+      const gananciaNeta = tarifa - costoEnergia - costoMantenimiento;
 
       const porKm = gananciaNeta / distancia;
       const horas = tiempoMin / 60;
       const porHora = gananciaNeta / horas;
 
       // Formateo
+      const energiaFmt = costoEnergia.toFixed(2);
+      const mantFmt = costoMantenimiento.toFixed(2);
       const netaFmt = gananciaNeta.toFixed(2);
       const kmFmt = porKm.toFixed(2);
       const horaFmt = porHora.toFixed(2);
@@ -364,7 +473,14 @@
       }
 
       res.className = `result ${clase} visible`;
-      res.innerHTML = `Ganancia neta: $${netaFmt}<br>${kmFmt}/km | ${horaFmt}/h`;
+      res.innerHTML = `
+        <div class="desglose">
+          Costo ${etiquetaEnergia}: $${energiaFmt}<br>
+          Costo Mantenimiento: $${mantFmt}
+        </div>
+        <div class="neta">Ganancia neta: $${netaFmt}</div>
+        <div class="rentabilidad">${kmFmt}/km | ${horaFmt}/h</div>
+      `;
     }
   </script>
 </body>
